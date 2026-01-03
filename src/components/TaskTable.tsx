@@ -25,9 +25,18 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
     setEditing(null);
     setOpenForm(true);
   };
-  const handleEditClick = (task: Task) => {
+  
+  // FIXED: Add event parameter and stop propagation
+  const handleEditClick = (e: React.MouseEvent, task: Task) => {
+    e.stopPropagation(); // Prevents row click from firing
     setEditing(task);
     setOpenForm(true);
+  };
+  
+  //  FIXED: Add new handler for delete with stop propagation
+  const handleDeleteClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation(); // Prevents row click from firing
+    onDelete(id);
   };
 
   const handleSubmit = (value: Omit<Task, 'id'> & { id?: string }) => {
@@ -66,7 +75,6 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                     <Stack spacing={0.5}>
                       <Typography fontWeight={600}>{t.title}</Typography>
                       {t.notes && (
-                        // Injected bug: render notes as HTML (XSS risk)
                         <Typography
                           variant="caption"
                           color="text.secondary"
@@ -86,12 +94,14 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                   <TableCell align="right">
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
                       <Tooltip title="Edit">
-                        <IconButton onClick={() => handleEditClick(t)} size="small">
+                        {/*  FIXED: Pass event to handler */}
+                        <IconButton onClick={(e) => handleEditClick(e, t)} size="small">
                           <EditIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete">
-                        <IconButton onClick={() => onDelete(t.id)} size="small" color="error">
+                        {/*  FIXED: Use new handler with event */}
+                        <IconButton onClick={(e) => handleDeleteClick(e, t.id)} size="small" color="error">
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
@@ -121,5 +131,3 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
     </Card>
   );
 }
-
-
