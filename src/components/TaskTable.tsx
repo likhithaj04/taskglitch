@@ -9,7 +9,7 @@ import TaskDetailsDialog from '@/components/TaskDetailsDialog';
 
 interface Props {
   tasks: DerivedTask[];
-  onAdd: (payload: Omit<Task, 'id'>) => void;
+  onAdd: (payload: Omit<Task, 'id' | 'createdAt' | 'completedAt'>) => void;  // ✅ Updated type
   onUpdate: (id: string, patch: Partial<Task>) => void;
   onDelete: (id: string) => void;
 }
@@ -26,25 +26,24 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
     setOpenForm(true);
   };
   
-  // FIXED: Add event parameter and stop propagation
   const handleEditClick = (e: React.MouseEvent, task: Task) => {
-    e.stopPropagation(); // Prevents row click from firing
+    e.stopPropagation();
     setEditing(task);
     setOpenForm(true);
   };
   
-  //  FIXED: Add new handler for delete with stop propagation
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation(); // Prevents row click from firing
+    e.stopPropagation();
     onDelete(id);
   };
 
-  const handleSubmit = (value: Omit<Task, 'id'> & { id?: string }) => {
+  // ✅ Updated to handle the new type
+  const handleSubmit = (value: Omit<Task, 'id' | 'createdAt' | 'completedAt'> & { id?: string }) => {
     if (value.id) {
-      const { id, ...rest } = value as Task;
+      const { id, ...rest } = value;
       onUpdate(id, rest);
     } else {
-      onAdd(value as Omit<Task, 'id'>);
+      onAdd(value);
     }
   };
 
@@ -94,13 +93,11 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                   <TableCell align="right">
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
                       <Tooltip title="Edit">
-                        {/*  FIXED: Pass event to handler */}
                         <IconButton onClick={(e) => handleEditClick(e, t)} size="small">
                           <EditIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete">
-                        {/*  FIXED: Use new handler with event */}
                         <IconButton onClick={(e) => handleDeleteClick(e, t.id)} size="small" color="error">
                           <DeleteIcon fontSize="small" />
                         </IconButton>
