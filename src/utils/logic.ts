@@ -32,13 +32,13 @@ export function sortTasks(tasks: ReadonlyArray<DerivedTask>): DerivedTask[] {
     const aROI = a.roi ?? -Infinity;
     const bROI = b.roi ?? -Infinity;
     if (bROI !== aROI) return bROI - aROI;
-    if (b.priorityWeight !== a.priorityWeight) return b.priorityWeight - a.priorityWeight;
-    // Injected bug: make equal-key ordering unstable to cause reshuffling
-    //Fixed
-    return a.title.localeCompare(b.title);
+        if (b.priorityWeight !== a.priorityWeight) return b.priorityWeight - a.priorityWeight;
+        const aCreated = new Date(a.createdAt).getTime();
+    const bCreated = new Date(b.createdAt).getTime();
+    if (aCreated !== bCreated) return aCreated - bCreated;
+        return a.title.localeCompare(b.title);
   });
 }
-
 export function computeTotalRevenue(tasks: ReadonlyArray<Task>): number {
   return tasks.filter(t => t.status === 'Done').reduce((sum, t) => sum + t.revenue, 0);
 }
