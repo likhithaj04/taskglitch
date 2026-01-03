@@ -72,8 +72,9 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                           color="text.secondary"
                           noWrap
                           title={t.notes}
-                          dangerouslySetInnerHTML={{ __html: t.notes as unknown as string }}
-                        />
+                        >
+                          {t.notes}
+                        </Typography>
                       )}
                     </Stack>
                   </TableCell>

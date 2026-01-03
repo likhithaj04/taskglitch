@@ -19,9 +19,11 @@ import {
 } from '@/utils/logic';
 
 function AppContent() {
-  const { loading, error, metrics, derivedSorted, addTask, updateTask, deleteTask, undoDelete, lastDeleted } = useTasksContext();
-  const handleCloseUndo = () => {};
-  const [q, setQ] = useState('');
+  const { loading, error, metrics, derivedSorted, addTask, updateTask, deleteTask, undoDelete, lastDeleted,  clearLastDeleted  } = useTasksContext();
+
+  const handleCloseUndo = () => {
+    clearLastDeleted();  
+  };  const [q, setQ] = useState('');
   const [fStatus, setFStatus] = useState<string>('All');
   const [fPriority, setFPriority] = useState<string>('All');
   const { user } = useUser();
